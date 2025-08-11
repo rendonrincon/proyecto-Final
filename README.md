@@ -1,5 +1,20 @@
-# proyecto-Final
-## Diagrama del Pipeline CI/CD + Observabilidad
+# Proyecto Final – API de Festivos con CI/CD y Observabilidad
+
+## Descripción
+Este proyecto forma parte de un conjunto de repositorios del estudio de despliegue de aplicaciones en AWS.  
+Aquí implementamos la **API de Festivos** en Spring Boot con Docker, desplegada mediante **AWS ECS**, **CodePipeline** y **CodeBuild**, incluyendo observabilidad y monitoreo en **CloudWatch**, **SNS** y **Grafana**.
+
+---
+
+## Pipeline y Observabilidad
+
+El flujo completo incluye:
+- Pruebas unitarias e integración.
+- Pruebas de carga y smoke tests.
+- Deploy automatizado a Staging y Producción.
+- Monitoreo en tiempo real.
+
+### Diagrama del Pipeline CI/CD
 
 ```mermaid
 graph LR
@@ -11,21 +26,15 @@ graph LR
     F --> G[AWS ECS (Producción)]
     G --> H[CloudWatch + SNS\nMonitoreo & Alertas]
     H --> I[Dashboard Grafana]
-📌 Este pipeline asegura que:
-
-Todo cambio pase por pruebas automáticas y manual approval antes de producción.
-
-Los smoke tests validen latencia y salud de la API.
-
-La observabilidad esté integrada con CloudWatch, SNS y Grafana para detectar y notificar incidentes.
-
 Vista Gráfica
 
-markdown
-Copiar
-Editar
+Repositorios relacionados
+Este proyecto está asociado con otros repositorios del mismo estudio:
 
-### Cómo usarlo en tu repo
-1. Guarda la imagen `pipeline_festivos_api.png` en la carpeta raíz del repo.
-2. Copia este bloque al `README.md`.
-3. En GitHub, se verá el diagrama Mermaid y también la imagen renderizada como backup
+API de Festivos – Código fuente
+
+Frontend del Proyecto
+
+Infraestructura como código (IaC)
+
+Proyecto Final – Documentación
