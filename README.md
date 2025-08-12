@@ -1,40 +1,147 @@
-# Proyecto Final – API de Festivos con CI/CD y Observabilidad
+Proyecto_Final_Arq_Nube
+Descripción
+API de Festivos desarrollada con Spring Boot y PostgreSQL, contenida en Docker. Desplegada en AWS ECS con pipeline CI/CD automatizado (CodeBuild, CodePipeline) e integración de monitoreo (CloudWatch, SNS, Grafana).
 
-## Descripción
-Este proyecto forma parte de un conjunto de repositorios del estudio de despliegue de aplicaciones en AWS.  
-Aquí implementamos la **API de Festivos** en Spring Boot con Docker, desplegada mediante **AWS ECS**, **CodePipeline** y **CodeBuild**, incluyendo observabilidad y monitoreo en **CloudWatch**, **SNS** y **Grafana**.
+Arquitectura
+Backend: Spring Boot (arquitectura hexagonal).
 
----
+Base de datos: PostgreSQL 15.
 
-## Pipeline y Observabilidad
+Contenedores: Docker & Docker Compose.
 
-El flujo completo incluye:
-- Pruebas unitarias e integración.
-- Pruebas de carga y smoke tests.
-- Deploy automatizado a Staging y Producción.
-- Monitoreo en tiempo real.
+Análisis: SonarQube + JaCoCo (cobertura).
 
-### Diagrama del Pipeline CI/CD
+Infraestructura: AWS CloudFormation (IaC).
 
-```mermaid
-graph LR
-    A[Desarrollador\nPush a GitHub] --> B[AWS CodeBuild\n(Build & Test)]
-    B --> C[Amazon ECR\nPush Imagen Docker]
-    C --> D[AWS ECS (Staging)]
-    D --> E[Smoke Tests\n(/api/health, latencia)]
-    E --> F[Manual Approval]
-    F --> G[AWS ECS (Producción)]
-    G --> H[CloudWatch + SNS\nMonitoreo & Alertas]
-    H --> I[Dashboard Grafana]
-Vista Gráfica
+Requisitos previos
+Docker & Docker Compose instalados.
 
-Repositorios relacionados
-Este proyecto está asociado con otros repositorios del mismo estudio:
+Maven (para pruebas locales).
 
-API de Festivos – Código fuente
+AWS CLI configurado (aws configure).
 
-Frontend del Proyecto
+Cuenta AWS con permisos CodeBuild, ECR, ECS.
 
-Infraestructura como código (IaC)
+Clonar proyecto
+bash
+Copiar
+Editar
+git clone https://github.com/rendonrincon/proyecto-Final.git
+cd proyecto-Final
+Levantar servicios con Docker Compose (local)
+bash
+Copiar
+Editar
+docker-compose up -d postgres sonarqube
+# Esperar inicialización (30-60s)
+docker-compose logs -f postgres
+docker-compose logs -f sonarqube
 
-Proyecto Final – Documentación
+docker-compose up -d api-festivos
+Verificar salud de la API:
+
+bash
+Copiar
+Editar
+curl http://localhost:8080/actuator/health
+Acceder a SonarQube:
+
+http://localhost:9000 (admin/admin)
+
+Comandos útiles para desarrollo
+Ejecutar pruebas unitarias y cobertura:
+
+bash
+Copiar
+Editar
+cd apiFestivos
+mvn clean verify
+Generar reportes de cobertura agregada:
+
+bash
+Copiar
+Editar
+mvn jacoco:report-aggregate
+Ejecutar análisis SonarQube:
+
+bash
+Copiar
+Editar
+mvn sonar:sonar \
+  -Dsonar.projectKey=festivos-api \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.token=TU_TOKEN
+Limpiar y reconstruir imágenes Docker:
+
+bash
+Copiar
+Editar
+docker-compose down -v
+docker-compose build --no-cache
+docker-compose up -d
+Pipeline CI/CD en AWS
+Variables de entorno en CodeBuild
+AWS_ACCOUNT_ID
+
+AWS_DEFAULT_REGION
+
+IMAGE_REPO_NAME=festivos-api
+
+SONAR_HOST_URL (opcional)
+
+SONAR_TOKEN (para análisis SonarQube)
+
+Fases del pipeline (definidas en buildspec-backend.yml)
+Install: Configuración de entorno (Java 17, Docker).
+
+Pre-build: Login a ECR, generación de tag.
+
+Build: Ejecutar pruebas, generar artefactos, construir imagen Docker.
+
+Post-build: Push de imagen a ECR, generar archivo imagedefinitions.json.
+
+Despliegue en ECS
+Configuración de Task Definition con variables de entorno para conexión a RDS.
+
+Deploy automatizado desde CodePipeline usando imagen en ECR.
+
+Smoke tests ejecutados en ambiente Staging.
+
+Approval manual para producción.
+
+Monitoreo con CloudWatch, SNS y dashboards Grafana.
+
+Monitoreo y Observabilidad
+Health endpoint: /actuator/health
+
+Logs enviados a CloudWatch Logs.
+
+Métricas y alarmas en CloudWatch y SNS.
+
+Dashboard Grafana configurado para visualización en tiempo real.
+
+Dashboard Grafana:
+https://rendonrincon.grafana.net/a/grafana-setupguide-app/getting-started
+
+Repositorios Relacionados
+Backend API Festivos: TT_ProyectoFinal_Backend
+
+Infraestructura AWS IaC: udeabootcamp-infra
+
+Infraestructura Azure (alternativa): udeabootcamp-infraaznc
+
+Cómo contribuir
+Fork y clona el repo.
+
+Crear una rama nueva para tu feature o fix.
+
+Ejecutar pruebas localmente:
+
+bash
+Copiar
+Editar
+make test-coverage
+Hacer commit y push.
+
+Crear pull request para revisión.
+
